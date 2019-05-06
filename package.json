@@ -1,0 +1,22 @@
+{
+  "name": "ghavatardownloader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "download_avatars.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leaderg/ghAvatarDownloader.git"
+  },
+  "author": "leaderg",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/leaderg/ghAvatarDownloader/issues"
+  },
+  "homepage": "https://github.com/leaderg/ghAvatarDownloader#readme",
+  "dependencies": {
+    "request": "^2.88.0"
+  }
+}
