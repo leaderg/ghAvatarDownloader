@@ -1,9 +1,15 @@
 var request = require('request');
 var api = require('./api-key');
 var fs = require('fs');
+//Takes input from Terminal:
+var terminalInput = process.argv.splice(2);
 
-console.log('Welcome to the GitHub Avatar Downloader!');
+//Makes terminal imput have required arguments.
+if (terminalInput.length === 2) {
+  getRepoContributors(terminalInput[0], terminalInput[1], downloadImageByURL);
+} else {console.log('Improper Input');}
 
+//Main function. Takes in two string arguments for determining proper repo, and processing callback function.
 function getRepoContributors(repoOwner, repoName, callback) {
   var output = "";
   var url = {
@@ -14,6 +20,7 @@ function getRepoContributors(repoOwner, repoName, callback) {
     }
   };
 
+  //Connects with Github API and receives JSON
   request.get(url)
     .on('error', (err) => {
       throw err;
@@ -26,6 +33,7 @@ function getRepoContributors(repoOwner, repoName, callback) {
     })
     .on('end', () => {
       console.log('data transfer complete!');
+      //Utilizes helper function and callback function here on received JSON:
       callback(getAvatars(JSON.parse(output)), "./images");
     });
 };
@@ -37,18 +45,17 @@ function getAvatars(input) {
     output.push(element.avatar_url);
   });
   return output;
-}
+};
 
 //Takes an array of URLs pointing towards jpg files and downloads them to a designated folder.
 function downloadImageByURL(url, filepath) {
   for (var i = 0; i < url.length; i++){
-        request.get(url[i])               // Note 1
-         .on('error', function (err) {                                   // Note 2
-           throw err;
-         }).on('end', () => {
-          console.log(`Finished Downloading Image`)
-         })
-         .pipe(fs.createWriteStream(`${filepath}/img${i}.jpg`));
-  }}
-
-getRepoContributors('jquery', 'jquery', downloadImageByURL);
+    request.get(url[i])
+   .on('error', function (err) {
+     throw err;
+   }).on('end', () => {
+    console.log(`Finished Downloading Image`)
+   })
+   .pipe(fs.createWriteStream(`${filepath}/img${i}`));
+  }
+};
