@@ -25,8 +25,14 @@ function getRepoContributors(repoOwner, repoName/*, callback*/) {
     })
     .on('end', () => {
       console.log('data transfer complete!');
-      console.log(JSON.parse(output));
+      getAvatars(JSON.parse(output));
     });
 };
+
+function getAvatars(input) {
+  input.forEach(element => {
+    console.log(element.avatar_url);
+  });
+}
 
 getRepoContributors('jquery', 'jquery');
