@@ -4,7 +4,8 @@ var fs = require('fs');
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
-function getRepoContributors(repoOwner, repoName/*, callback*/) {
+function getRepoContributors(repoOwner, repoName, callback) {
+  var output = "";
   var url = {
     url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
     headers: {
@@ -13,7 +14,6 @@ function getRepoContributors(repoOwner, repoName/*, callback*/) {
     }
   };
 
-  var output = "";
   request.get(url)
     .on('error', (err) => {
       throw err;
@@ -26,10 +26,11 @@ function getRepoContributors(repoOwner, repoName/*, callback*/) {
     })
     .on('end', () => {
       console.log('data transfer complete!');
-      getAvatars(JSON.parse(output));
+      callback(getAvatars(JSON.parse(output)), "./images");
     });
 };
 
+//Goes through API JSON to find Avatar URLs and returns as an array.
 function getAvatars(input) {
   let output = [];
   input.forEach(element => {
@@ -38,6 +39,7 @@ function getAvatars(input) {
   return output;
 }
 
+//Takes an array of URLs pointing towards jpg files and downloads them to a designated folder.
 function downloadImageByURL(url, filepath) {
   for (var i = 0; i < url.length; i++){
         request.get(url[i])               // Note 1
@@ -46,10 +48,7 @@ function downloadImageByURL(url, filepath) {
          }).on('end', () => {
           console.log(`Finished Downloading Image`)
          })
-         .pipe(fs.createWriteStream(`${filepath}/img${i}`));
+         .pipe(fs.createWriteStream(`${filepath}/img${i}.jpg`));
   }}
-// getRepoContributors('jquery', 'jquery');
-downloadImageByURL(['https://avatars1.githubusercontent.com/u/86454?v=4',
-  'https://avatars1.githubusercontent.com/u/81942?v=4',
-  'https://avatars1.githubusercontent.com/u/43004?v=4' ]
-, './images');
+
+getRepoContributors('jquery', 'jquery', downloadImageByURL);
