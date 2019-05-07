@@ -1,5 +1,6 @@
 var request = require('request');
 var api = require('./api-key');
+var fs = require('fs');
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
@@ -30,9 +31,25 @@ function getRepoContributors(repoOwner, repoName/*, callback*/) {
 };
 
 function getAvatars(input) {
+  let output = [];
   input.forEach(element => {
-    console.log(element.avatar_url);
+    output.push(element.avatar_url);
   });
+  return output;
 }
 
-getRepoContributors('jquery', 'jquery');
+function downloadImageByURL(url, filepath) {
+  for (var i = 0; i < url.length; i++){
+        request.get(url[i])               // Note 1
+         .on('error', function (err) {                                   // Note 2
+           throw err;
+         }).on('end', () => {
+          console.log(`Finished Downloading Image`)
+         })
+         .pipe(fs.createWriteStream(`${filepath}/img${i}`));
+  }}
+// getRepoContributors('jquery', 'jquery');
+downloadImageByURL(['https://avatars1.githubusercontent.com/u/86454?v=4',
+  'https://avatars1.githubusercontent.com/u/81942?v=4',
+  'https://avatars1.githubusercontent.com/u/43004?v=4' ]
+, './images');
